@@ -39,11 +39,6 @@ public class JavaFXTemplate extends Application {
 		b1.setOnAction(e->rulesbutton(primaryStage, b5));
 		b2.setOnAction(e->oddsbutton(primaryStage));
 
-		b5.setOnAction(e-> {
-			mainscreen(primaryStage);
-			b1.setDisable(false);
-		});
-
 	}
 
 	public void mainscreen(Stage primaryStage){
@@ -73,10 +68,11 @@ public class JavaFXTemplate extends Application {
 
 		b3.setMaxSize(300,300);
 
-		VBox vbox1 = new VBox(b3);
 
+		// Rules, odds, start playing, exit button
 		VBox vbox2 = new VBox(30, b1, b2);
 		VBox vbox3 = new VBox(b4);
+		VBox vbox1 = new VBox(b3);
 
 		vbox1.setAlignment(Pos.CENTER);
 		vbox3.setAlignment(Pos.BOTTOM_RIGHT);
@@ -84,6 +80,7 @@ public class JavaFXTemplate extends Application {
 		bp.setLeft(vbox2);
 		bp.setRight(vbox3);
 
+		exitbutton(primaryStage, b4); // exit button
 
 		Scene scene = new Scene(bp, 400,400);
 		primaryStage.setScene(scene);
@@ -107,6 +104,11 @@ public class JavaFXTemplate extends Application {
 		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
 		bp.setRight(vbox1);
 
+		b5.setOnAction(e-> {
+			mainscreen(primaryStage);
+			b1.setDisable(false);
+		});
+
 		Scene scene = new Scene(bp, 400,400);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -117,15 +119,30 @@ public class JavaFXTemplate extends Application {
 		bp = new BorderPane();
 		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
 
+		// Top of BorderPane
 		t3 = new TextField("Odds");
 		t3.setEditable(false);
 		t3.setStyle("-fx-border-color: red;");
 		t3.setStyle("-fx-background-color: darkorange;");
 		bp.setTop(t3);
 
+		// Back button
+		VBox vbox1 = new VBox(b5);
+		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
+		bp.setRight(vbox1);
+
+		b5.setOnAction(e-> {
+			mainscreen(primaryStage);
+			b1.setDisable(false);
+		});
+
 		Scene scene = new Scene(bp, 400,400);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+
+	public void exitbutton(Stage primaryStage, Button b4){
+		b4.setOnAction(e-> primaryStage.close());
 	}
 
 }
