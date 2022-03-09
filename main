@@ -1,0 +1,116 @@
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+
+public class JavaFXTemplate extends Application {
+
+	private Button b1;
+	private Button b2;
+	private Button b4;
+	private Button b3;
+	private TextField t1;
+	private TextField t2;
+	private TextField t3;
+//	private MenuBar menu;
+//	private EventHandler<ActionEvent> myHandler;
+	private BorderPane bp;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		mainscreen(primaryStage);
+
+		// linking the buttons to eventhandlers
+		b1.setOnAction(e->rulesbutton(primaryStage));
+		b2.setOnAction(e->oddsbutton(primaryStage));
+
+	}
+
+	public void mainscreen(Stage primaryStage){
+		// TODO Auto-generated method stub
+		bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
+		primaryStage.setTitle("Project#2 Keno");
+
+		// Layout for top
+		t1 = new TextField("Menu");
+		t1.setEditable(false);
+		t1.setStyle("-fx-border-color: red;");
+		t1.setStyle("-fx-background-color: darkorange;");
+		bp.setTop(t1);
+
+		// buttons
+		b1 = new Button("Rules");
+		b2 = new Button("Odds");
+		b3 = new Button("Start Playing");
+		b4 = new Button("Exit");
+		b1.setStyle("-fx-border-color: purple;");
+		b1.setStyle("-fx-background-color: pink;");
+		b2.setStyle("-fx-border-color: purple;");
+		b2.setStyle("-fx-background-color: pink;");
+		b3.setMaxSize(300,300);
+
+		VBox vbox1 = new VBox(b3);
+
+		VBox vbox2 = new VBox(30, b1, b2);
+		VBox vbox3 = new VBox(b4);
+
+		vbox1.setAlignment(Pos.CENTER);
+		vbox3.setAlignment(Pos.BOTTOM_RIGHT);
+		bp.setCenter(vbox1);
+		bp.setLeft(vbox2);
+		bp.setRight(vbox3);
+
+
+		Scene scene = new Scene(bp, 400,400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	public void rulesbutton(Stage primaryStage){
+
+		bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
+
+		t2 = new TextField("Rules");
+		t2.setEditable(false);
+		t2.setStyle("-fx-border-color: red;");
+		t2.setStyle("-fx-background-color: darkorange;");
+		bp.setTop(t2);
+
+		Scene scene = new Scene(bp, 400,400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	public void oddsbutton(Stage primaryStage){
+
+		bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
+
+		t3 = new TextField("Odds");
+		t3.setEditable(false);
+		t3.setStyle("-fx-border-color: red;");
+		t3.setStyle("-fx-background-color: darkorange;");
+		bp.setTop(t3);
+
+		Scene scene = new Scene(bp, 400,400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+}
