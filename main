@@ -14,10 +14,11 @@ import javafx.scene.paint.Color;
 
 public class JavaFXTemplate extends Application {
 
-	private Button b1;
-	private Button b2;
-	private Button b4;
-	private Button b3;
+	private Button b1;  // rules
+	private Button b2;  // odds
+	private Button b4; // exit
+	private Button b3; // start playing
+	private Button b5; // back button
 	private TextField t1;
 	private TextField t2;
 	private TextField t3;
@@ -35,8 +36,13 @@ public class JavaFXTemplate extends Application {
 		mainscreen(primaryStage);
 
 		// linking the buttons to eventhandlers
-		b1.setOnAction(e->rulesbutton(primaryStage));
+		b1.setOnAction(e->rulesbutton(primaryStage, b5));
 		b2.setOnAction(e->oddsbutton(primaryStage));
+
+		b5.setOnAction(e-> {
+			mainscreen(primaryStage);
+			b1.setDisable(false);
+		});
 
 	}
 
@@ -58,10 +64,13 @@ public class JavaFXTemplate extends Application {
 		b2 = new Button("Odds");
 		b3 = new Button("Start Playing");
 		b4 = new Button("Exit");
+		b5 = new Button("Back");
 		b1.setStyle("-fx-border-color: purple;");
 		b1.setStyle("-fx-background-color: pink;");
 		b2.setStyle("-fx-border-color: purple;");
 		b2.setStyle("-fx-background-color: pink;");
+
+
 		b3.setMaxSize(300,300);
 
 		VBox vbox1 = new VBox(b3);
@@ -81,16 +90,22 @@ public class JavaFXTemplate extends Application {
 		primaryStage.show();
 	}
 
-	public void rulesbutton(Stage primaryStage){
+	public void rulesbutton(Stage primaryStage, Button b5){
 
 		bp = new BorderPane();
 		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
 
+		// The top of borderpane
 		t2 = new TextField("Rules");
 		t2.setEditable(false);
 		t2.setStyle("-fx-border-color: red;");
 		t2.setStyle("-fx-background-color: darkorange;");
 		bp.setTop(t2);
+
+		// Back button
+		VBox vbox1 = new VBox(b5);
+		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
+		bp.setRight(vbox1);
 
 		Scene scene = new Scene(bp, 400,400);
 		primaryStage.setScene(scene);
