@@ -135,6 +135,19 @@ public class JavaFXTemplate extends Application {
 		t1.setStyle("-fx-background-color: darkorange;");
 		bp.setTop(t1);
 
+		// Text
+		Text odds1 = new Text();
+		Text odds2 = new Text();
+		Text odds3 = new Text();
+		Text odds4 = new Text();
+		Text odds5 = new Text();
+		Text odds6 = new Text();
+		VBox textvbox = new VBox(odds1, odds2, odds3, odds4, odds5, odds6);
+		odds1.setText("Odds of Keno... (21+ only, no gambling kids)\n");
+		odds2.setText("\nOdds for 1 spot: \n Match      Prize\n    1              $2\n\n");
+		odds3.setText("\nOdds for 4 spot: \n Match      Prize\n    4              $75\n    3              $5\n    2              $1\n");
+		bp.setLeft(textvbox);
+
 		// Back button
 		Button b1 = new Button("Back");
 		VBox vbox1 = new VBox(b1);
