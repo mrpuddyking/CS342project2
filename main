@@ -227,3 +227,75 @@ public class JavaFXTemplate extends Application {
 	}
 
 }
+
+public Scene startplayingbutton(Stage primaryStage) {
+		
+         Button b10 = new Button("Next");
+		
+		 Button b6 = new Button("1");
+		 Button b7 = new Button("4");
+		 Button b8 = new Button("8");
+		 Button b9 = new Button("10");
+		 TextField t4 = new TextField("Pick number of Spots");
+		 HBox Hbox1 = new HBox(b6,b7,b8,b9);
+		 Hbox1.setAlignment(Pos.TOP_LEFT);
+		
+		 b6.setOnAction(e -> {
+			 b6.setText("Print odds for 1");
+		 });
+		 b7.setOnAction(e -> {
+			 b7.setText("Print odds for 4");
+		 });
+		 b8.setOnAction(e ->{
+			 b8.setText("Print odds for 8");
+		 });
+		 b9.setOnAction(e ->{
+			 b9.setText("Print odds for 10");
+		 });
+	    
+//		 Button b11 = new Button("1");
+//		 Button b12 = new Button("2");
+//		 Button b13 = new Button("3");
+//		 Button b14 = new Button("4");
+//		 TextField t5 = new TextField("Pick number of Drawings");
+//		 HBox Hbox2 = new HBox(b11,b12,b13,b14);
+//		 Hbox2.setAlignment(Pos.CENTER_LEFT);
+		 
+		
+		
+		BorderPane bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
+        bp.setCenter(Hbox1);
+     //   bp.setCenter(Hbox2);
+		
+	
+		bp.setTop(t4);
+	//	bp.setLeft(t5);
+		bp.setRight(b10);
+		b10.setOnAction(e -> primaryStage.setScene(startplayingbutton(primaryStage)));
+		
+		
+
+		
+		
+		 
+		// Back button
+		Button b1 = new Button("Back");
+		b1.setOnAction(e -> mainscreen(primaryStage));
+		bp.setBottom(b1);
+		 
+		Scene scene = new Scene(bp, 400, 400);
+		return scene;
+        
+
+	}
+	public void potentialwinning(Stage primaryStage) {
+		Button b10 = new Button("Next");
+		BorderPane bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: blue;");
+        HBox Hbox1 = new HBox(b10);
+        Hbox1.setAlignment(Pos.TOP_LEFT);
+        bp.setCenter(Hbox1);
+	}
+
+}
