@@ -1,32 +1,27 @@
 import javafx.application.Application;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import javafx.scene.text.Text;  // for rules and odds maybe
+
 
 public class JavaFXTemplate extends Application {
 
-	private Button b1; // rules
-	private Button b2; // odds
-	private Button b4; // exit
-	private Button b3; // start playing
-	private Button b5; // back button
-	private TextField t1;
-	private TextField t2;
-	private TextField t3;
-	// private MenuBar menu;
-	// private EventHandler<ActionEvent> myHandler;
-	private BorderPane bp;
+//	private Button b1;  // rules
+//	private Button b2;  // odds
+//	private Button b4; // exit
+//	private Button b3; // start playing
+//	private Button b5; // back button
+//	private TextField t1; // Menu txt in first scene
+//	private TextField t2; // Rules txt in first scene
+//	private TextField t3; // Odds txt in first scene
+//	private BorderPane bp;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -35,41 +30,48 @@ public class JavaFXTemplate extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
-		b1 = new Button("Rules");
-		b2 = new Button("Odds");
-		b3 = new Button("Start Playing");
-		b4 = new Button("Exit");
-		b5 = new Button("Back");
-		b1.setStyle("-fx-border-color: purple;");
-		b1.setStyle("-fx-background-color: pink;");
-		b2.setStyle("-fx-border-color: purple;");
-		b2.setStyle("-fx-background-color: pink;");
-
-		b1.setOnAction(e -> primaryStage.setScene(rulesbutton(primaryStage, b5)));
-		b2.setOnAction(e -> primaryStage.setScene(oddsbutton(primaryStage)));
-		b3.setOnAction(e -> primaryStage.setScene(startplayingbutton(primaryStage)));
 		mainscreen(primaryStage);
+
 	}
 
-	public void mainscreen(Stage primaryStage) {
-		// TODO Auto-generated method stub
-		bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
+	public void mainscreen(Stage primaryStage){
+		BorderPane bp = new BorderPane();
+
+		// Background Image
+		Image kenoimg = new Image("prettypic.png");
+		BackgroundImage bImg = new BackgroundImage(kenoimg, BackgroundRepeat.NO_REPEAT,
+				BackgroundRepeat.NO_REPEAT,
+				BackgroundPosition.DEFAULT,
+				BackgroundSize.DEFAULT);
+		Background bGround = new Background(bImg);
+		bp.setBackground(bGround);
+
+		bp.setStyle("-fx-font-family: SansSerif;");
 		primaryStage.setTitle("Project#2 Keno");
 
 		// Layout for top
-		t1 = new TextField("Menu");
+		TextField t1 = new TextField("Menu");
 		t1.setEditable(false);
 		t1.setStyle("-fx-border-color: red;");
 		t1.setStyle("-fx-background-color: darkorange;");
 		bp.setTop(t1);
 
 		// buttons
+		Button b1 = new Button("Rules");
+		Button b2 = new Button("Odds");
+		Button b3 = new Button("Start Playing");
+		Button b4 = new Button("Exit");
+		b1.setStyle("-fx-border-color: purple;");
+		b1.setStyle("-fx-background-color: pink;");
+		b2.setStyle("-fx-border-color: purple;");
+		b2.setStyle("-fx-background-color: pink;");
+		b3.setMaxSize(300,300);
 
+		// linking the buttons to eventhandlers
+		b1.setOnAction(e->rulesbutton(primaryStage));
+		b2.setOnAction(e->oddsbutton(primaryStage));
+		b3.setOnAction(e->startplayingbutton(primaryStage));
 
-
-		b3.setMaxSize(300, 300);
 
 		// Rules, odds, start playing, exit button
 		VBox vbox2 = new VBox(30, b1, b2);
@@ -84,23 +86,22 @@ public class JavaFXTemplate extends Application {
 
 		exitbutton(primaryStage, b4); // exit button
 
-		Scene scene = new Scene(bp, 400, 400);
+		Scene scene = new Scene(bp, 600,600);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
 	}
 
-	public Scene rulesbutton(Stage primaryStage, Button b5) {
+	public void rulesbutton(Stage primaryStage){
 
 		BorderPane bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
 
 		// The top of borderpane
 		TextField t1 = new TextField("Rules");
 		t1.setEditable(false);
 		t1.setStyle("-fx-border-color: red;");
 		t1.setStyle("-fx-background-color: darkorange;");
-		// bp.setTop(t1);
+		bp.setTop(t1);
 
 		// Text
 		Text rules1 = new Text();
@@ -111,16 +112,11 @@ public class JavaFXTemplate extends Application {
 		Text rules6 = new Text();
 		VBox textvbox = new VBox(rules1, rules2, rules3, rules4, rules5, rules6);
 		rules1.setText("Rules of Keno...\n");
-		rules2.setText(
-				"1) Decide how much to play per draw. Each play costs $1.\n    Play for $2 to double your prize; play for $3 to triple your prize and so on up to $10 per play.\n");
-		rules3.setText(
-				"2) Select how many consecutive draws to play. Pick up to 4. Drawings happen whenever because we wrote this code. \n");
-		rules4.setText(
-				"3) Select how many numbers to match.\n    Either 1, 4, 8 or 10 spots ( aka numbers to be picked). \n    The number of Spots you choose and the amount you play per draw will determine the amount you could win.\n    See the odds chart to determine the amount you could win with a $1 play.\n");
-		rules5.setText(
-				"4) Pick as many numbers as you did Spots. \n    You can select numbers from 1 to 80 or choose Quick Pick and let the computer terminal randomly pick your numbers.\n");
-		rules6.setText(
-				"5) You cannot change the number of spots or drawings midway through the drawings because that is cheating. \n");
+		rules2.setText("1) Decide how much to play per draw. Each play costs $1.\n    Play for $2 to double your prize; play for $3 to triple your prize and so on up to $10 per play.\n");
+		rules3.setText("2) Select how many consecutive draws to play. Pick up to 4. Drawings happen whenever because we wrote this code. \n");
+		rules4.setText("3) Select how many numbers to match.\n    Either 1, 4, 8 or 10 spots ( aka numbers to be picked). \n    The number of Spots you choose and the amount you play per draw will determine the amount you could win.\n    See the odds chart to determine the amount you could win with a $1 play.\n");
+		rules5.setText("4) Pick as many numbers as you did Spots. \n    You can select numbers from 1 to 80 or choose Quick Pick and let the computer terminal randomly pick your numbers.\n");
+		rules6.setText("5) You cannot change the number of spots or drawings midway through the drawings because that is cheating. \n");
 		bp.setLeft(textvbox);
 
 		// Back button
@@ -129,18 +125,17 @@ public class JavaFXTemplate extends Application {
 		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
 		bp.setRight(vbox1);
 
-		b1.setOnAction(e -> mainscreen(primaryStage));
+		b1.setOnAction(e->mainscreen(primaryStage));
 
-		Scene scene = new Scene(bp, 800, 400);
-		// primaryStage.setScene(scene);
-		// primaryStage.show();
-		return scene;
+		Scene scene = new Scene(bp, 800,400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 
-	public Scene oddsbutton(Stage primaryStage) {
+	public void oddsbutton(Stage primaryStage){
 
 		BorderPane bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: lightblue;");
 
 		// Top of BorderPane
 		TextField t1 = new TextField("Odds");
@@ -158,9 +153,9 @@ public class JavaFXTemplate extends Application {
 		Text odds6 = new Text();
 		VBox textvbox = new VBox(odds1, odds2, odds3, odds4, odds5, odds6);
 		odds1.setText("Odds of Keno... (21+ only, no gambling kids)\n");
-		odds2.setText("\nOdds for 1 spot: \n Match      Prize\n    1              $2\n\n");
-		odds3.setText(
-				"\nOdds for 4 spot: \n Match      Prize\n    4              $75\n    3              $5\n    2              $1\n");
+		odds2.setText("\nOdds for 1 spot: \n Match      Prize\n    1              $2\n");
+		odds3.setText("\nOdds for 4 spot: \n Match      Prize\n    4              $75\n    3              $5\n    2              $1\n");
+		odds4.setText("\nOdds for 8 spot: \n Match      Prize\n    8          $10,000\n    7           $750\n    6            $50\n    5            $12\n    4             $2\n");
 		bp.setLeft(textvbox);
 
 		// Back button
@@ -169,44 +164,33 @@ public class JavaFXTemplate extends Application {
 		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
 		bp.setRight(vbox1);
 
-		b1.setOnAction(e -> mainscreen(primaryStage));
+		b1.setOnAction(e->mainscreen(primaryStage));
 
-		Scene scene = new Scene(bp, 400, 400);
-		// primaryStage.setScene(scene);
-		// primaryStage.show();
-		return scene;
+		Scene scene = new Scene(bp, 400,400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 
-	public void exitbutton(Stage primaryStage, Button b4) {
-		b4.setOnAction(e -> mainscreen(primaryStage));
-	}
+	public void startplayingbutton(Stage primaryStage) {
 
-	public Scene startplayingbutton(Stage primaryStage) {
-
-		BorderPane bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
-
-		// Top of BorderPane
+		GridPane gp = new GridPane();
+		gp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
 		
-		 
-	
-		bp.setTop(t1);
 
-		// Text
-	
-		 
 		// Back button
 		Button b1 = new Button("Back");
 		b1.setOnAction(e -> mainscreen(primaryStage));
-		bp.setBottom(b1);
-		 
-		Scene scene = new Scene(bp, 400, 400);
-		return scene;
+		
 
-		// bp = new BorderPane();
-		// bp.setStyle("-fx-background-color: darkblue;");
-		// bp.setStyle("-fx-font-family: SansSerif;");
+		Scene scene = new Scene(gp, 400, 400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
 
+	}
+
+	public void exitbutton(Stage primaryStage, Button b4){
+		b4.setOnAction(e-> primaryStage.close());
 	}
 
 }
