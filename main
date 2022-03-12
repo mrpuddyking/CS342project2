@@ -10,18 +10,12 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;  // for rules and odds maybe
 
+import static java.lang.Integer.parseInt;
+import static java.lang.String.valueOf;
+
 
 public class JavaFXTemplate extends Application {
 
-//	private Button b1;  // rules
-//	private Button b2;  // odds
-//	private Button b4; // exit
-//	private Button b3; // start playing
-//	private Button b5; // back button
-//	private TextField t1; // Menu txt in first scene
-//	private TextField t2; // Rules txt in first scene
-//	private TextField t3; // Odds txt in first scene
-//	private BorderPane bp;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -173,20 +167,59 @@ public class JavaFXTemplate extends Application {
 
 	public void startplayingbutton(Stage primaryStage) {
 
-		GridPane gp = new GridPane();
-		gp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
-		
+		BorderPane bp = new BorderPane();
+		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: black;");
+
+		// Decided against background image for start playing because distracts from choosing numebers
+//		// Background Image
+//		Image kenoimg = new Image("keno.jpg");
+//		BackgroundImage bImg = new BackgroundImage(kenoimg, BackgroundRepeat.NO_REPEAT,
+//				BackgroundRepeat.NO_REPEAT,
+//				BackgroundPosition.DEFAULT,
+//				new BackgroundSize(1.0, 1.0, true, true, false, false));
+//		Background bGround = new Background(bImg);
+//		bp.setBackground(bGround);
 
 		// Back button
 		Button b1 = new Button("Back");
-		b1.setOnAction(e -> mainscreen(primaryStage));
-		
+		VBox vbox1 = new VBox(b1);
+		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
+		bp.setRight(vbox1);
 
-		Scene scene = new Scene(gp, 400, 400);
+		// button grid
+		GridPane gp = new GridPane();
+		String a = "1";
+
+		// setting the spacing between buttons
+		gp.setHgap(10);
+		gp.setVgap(10);
+
+		// creating the buttons and giving numeric names
+		for ( int i = 0; i < 8; i++){
+			for ( int j = 0; j < 10; j++){
+				Button x = new Button(a);
+				x.minHeight(10);
+				x.minWidth(10);
+				gp.add(x, j, i);
+				a = increment(a); // brings to function that increments a to next string number.
+			}
+		}
+		gp.setAlignment(Pos.CENTER);
+		bp.setRight(gp);
+
+
+		Scene scene = new Scene(bp, 800, 600);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
 
+
+	}
+
+	public String increment(String a){
+		int b = Integer.parseInt(a);
+		b++;
+		a = String.valueOf(b);
+		return a;
 	}
 
 	public void exitbutton(Stage primaryStage, Button b4){
