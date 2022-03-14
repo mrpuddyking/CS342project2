@@ -241,37 +241,51 @@ public Scene startplayingbutton(Stage primaryStage) {
 		 Hbox1.setAlignment(Pos.TOP_LEFT);
 		
 		 b6.setOnAction(e -> {
-			 b6.setText("Print odds for 1");
+			 numspots = 1;
 		 });
 		 b7.setOnAction(e -> {
-			 b7.setText("Print odds for 4");
+			numspots = 4;
 		 });
 		 b8.setOnAction(e ->{
-			 b8.setText("Print odds for 8");
+			numspots = 8;
 		 });
 		 b9.setOnAction(e ->{
-			 b9.setText("Print odds for 10");
+			numspots = 10;
 		 });
 	    
-//		 Button b11 = new Button("1");
-//		 Button b12 = new Button("2");
-//		 Button b13 = new Button("3");
-//		 Button b14 = new Button("4");
-//		 TextField t5 = new TextField("Pick number of Drawings");
-//		 HBox Hbox2 = new HBox(b11,b12,b13,b14);
-//		 Hbox2.setAlignment(Pos.CENTER_LEFT);
+		 Button b11 = new Button("1");
+		 Button b12 = new Button("2");
+		 Button b13 = new Button("3");
+		 Button b14 = new Button("4");
+		 TextField t5 = new TextField("Pick number of Drawings");
+		 HBox Hbox2 = new HBox(b11,b12,b13,b14);
+		 Hbox2.setAlignment(Pos.CENTER_LEFT);
+		 VBox vbox1 = new VBox(t4,Hbox1,t5,Hbox2);
 		 
+		 b11.setOnAction(e -> {
+			 numdrawings = 1;
+		 });
+		 b12.setOnAction(e -> {
+			numdrawings = 2;
+		 });
+		 b13.setOnAction(e ->{
+			numdrawings = 3;
+		 });
+		 b14.setOnAction(e ->{
+			numdrawings = 4;
+		 });
 		
 		
 		BorderPane bp = new BorderPane();
 		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
-        bp.setCenter(Hbox1);
+    //    bp.setCenter(Hbox1);
      //   bp.setCenter(Hbox2);
 		
 	
-		bp.setTop(t4);
+	//	bp.setTop(t4);
 	//	bp.setLeft(t5);
 		bp.setRight(b10);
+		bp.setCenter(vbox1);
 		b10.setOnAction(e -> primaryStage.setScene(startplayingbutton(primaryStage)));
 		
 		
