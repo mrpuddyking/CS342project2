@@ -16,6 +16,8 @@ import static java.lang.String.valueOf;
 
 public class JavaFXTemplate extends Application {
 
+        int numspots;
+	int numdrawings;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
