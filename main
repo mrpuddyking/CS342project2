@@ -1,14 +1,19 @@
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;  // for rules and odds maybe
+import javafx.util.Duration;
+
+import java.lang.Math;
+import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -16,8 +21,19 @@ import static java.lang.String.valueOf;
 
 public class JavaFXTemplate extends Application {
 
-        int numspots;
-	int numdrawings;
+	private int numchosen[] = new int[10]; // for numbers chosen on grid
+	private int numSpots[] = new int[1]; // for choosing num of spots
+	private int numDrawings[] = new int[1]; // for choosing num of drawings
+	private static int numofspotspicked = 0; // # of numbers chosen on grid pane
+	private static int numofnextdrawings = 0; // num of times next drawing was clicked
+	private ArrayList<Integer> numwinnings = new ArrayList<Integer>();
+	private int winnings = 0;
+	Text t10 = new Text("Winnings:  $" + winnings);
+	Text t11 = new Text("Winning Numbers:\n");
+	PauseTransition pause = new PauseTransition(Duration.seconds(1));
+	private int index = 0; // the index for printing pause transitions of winning numbers
+	Button b20 = new Button("Randomize"); // set here because needed in more than one func
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -146,12 +162,14 @@ public class JavaFXTemplate extends Application {
 		Text odds3 = new Text();
 		Text odds4 = new Text();
 		Text odds5 = new Text();
-		Text odds6 = new Text();
-		VBox textvbox = new VBox(odds1, odds2, odds3, odds4, odds5, odds6);
+		VBox textvbox = new VBox(odds1, odds2, odds3, odds4);
+		VBox textvbox2 = new VBox(odds5);
 		odds1.setText("Odds of Keno... (21+ only, no gambling kids)\n");
 		odds2.setText("\nOdds for 1 spot: \n Match      Prize\n    1              $2\n");
 		odds3.setText("\nOdds for 4 spot: \n Match      Prize\n    4              $75\n    3              $5\n    2              $1\n");
 		odds4.setText("\nOdds for 8 spot: \n Match      Prize\n    8          $10,000\n    7           $750\n    6            $50\n    5            $12\n    4             $2\n");
+		odds5.setText("\n\n\nOdds for 10 spot: \n Match      Prize\n   10         $100,000\n    9          $4,250\n    8           $450\n    7           $40\n    6           $15\n    5            $2\n    0            $5\n");
+		bp.setCenter(textvbox2);
 		bp.setLeft(textvbox);
 
 		// Back button
@@ -170,52 +188,387 @@ public class JavaFXTemplate extends Application {
 	public void startplayingbutton(Stage primaryStage) {
 
 		BorderPane bp = new BorderPane();
+		BorderPane innerbpbtm = new BorderPane(); // the inner vbox for the btm to separate buttons
+		BorderPane innerbpleft = new BorderPane();
+		BorderPane innerbpmiddle = new BorderPane();
 		bp.setStyle("-fx-font-family: SansSerif;"+"-fx-background-color: black;");
 
-		// Decided against background image for start playing because distracts from choosing numebers
-//		// Background Image
-//		Image kenoimg = new Image("keno.jpg");
-//		BackgroundImage bImg = new BackgroundImage(kenoimg, BackgroundRepeat.NO_REPEAT,
-//				BackgroundRepeat.NO_REPEAT,
-//				BackgroundPosition.DEFAULT,
-//				new BackgroundSize(1.0, 1.0, true, true, false, false));
-//		Background bGround = new Background(bImg);
-//		bp.setBackground(bGround);
+		// for array storing
+		int z[] = new int[1]; // the position at which the number is stored
+		z[0] = 0;
 
-		// Back button
-		Button b1 = new Button("Back");
-		VBox vbox1 = new VBox(b1);
-		vbox1.setAlignment(Pos.BOTTOM_RIGHT);
-		bp.setRight(vbox1);
-
-		// button grid
+		// 80 button grid
 		GridPane gp = new GridPane();
-		String a = "1";
+		gp.setDisable(true); // disables picking numbers
+
 
 		// setting the spacing between buttons
 		gp.setHgap(10);
 		gp.setVgap(10);
 
-		// creating the buttons and giving numeric names
-		for ( int i = 0; i < 8; i++){
-			for ( int j = 0; j < 10; j++){
-				Button x = new Button(a);
-				x.minHeight(10);
-				x.minWidth(10);
-				gp.add(x, j, i);
-				a = increment(a); // brings to function that increments a to next string number.
+		// the bottom left buttons grid ( choosing spots and drawings )
+
+		// Initial layout of scene
+		// -------------------------------------------------------------
+
+		// buttons for btm right of scene
+		Button b2 = new Button("Restart");
+		Button b1 = new Button("Back");
+		Button b3 = new Button("Next Drawing");
+		HBox hbox1 = new HBox(b1, b2, b3);
+		hbox1.setAlignment(Pos.BOTTOM_RIGHT);
+		hbox1.setSpacing(10);
+		innerbpbtm.setRight(hbox1);
+
+		// create 80 buttons and spots/drawings buttons
+		createbuttons(gp, z, innerbpmiddle);
+		chooseSpots(numSpots, innerbpbtm, bp, gp);
+		playbutton(innerbpmiddle, bp, gp);
+
+
+		// Winnings
+		VBox vbox = new VBox(t10);
+		t10.setFill(Color.WHEAT);
+		t10.setFont(new Font("Times New Roman", 20));
+		vbox.setAlignment(Pos.CENTER_LEFT);
+		bp.setLeft(vbox);
+
+		bp.setBottom(innerbpbtm);
+		//-------------------------------------------------------------
+
+		// restart button
+		b2.setOnAction(e->{
+			// resetting everything to 0;
+			z[0] = 0;
+			numSpots[0] = 0;
+			numDrawings[0] = 0;
+			numofspotspicked = 0;
+			numofnextdrawings = 0;
+			numwinnings.clear();
+			t11.setText("Winning Numbers:\n");
+
+			// clearing array
+			for ( int i = 0; i < numchosen.length; i++){
+				numchosen[i] = 0;
 			}
-		}
+
+			b3.setDisable(false); // enabling next drawing button
+			b20.setDisable(false); // enable the randomize button
+
+			// use gridpane object clear
+			gp.getChildren().clear();
+
+			// call a new set of everything
+			createbuttons(gp, z, innerbpmiddle);
+			chooseSpots(numSpots, innerbpbtm, bp, gp);
+			playbutton(innerbpmiddle, bp, gp);
+
+		});
+
+		// back button
+		b1.setOnAction(e->{
+			mainscreen(primaryStage);
+		});
+
+		// Next drawing button
+		b3.setOnAction(e->{
+			playbutton(innerbpmiddle, bp, gp);
+			innerbpmiddle.setDisable(false);
+			numofnextdrawings++;
+			numwinnings.clear();
+			if ( numofnextdrawings == numDrawings[0]){
+				b3.setDisable(true);
+			}
+			b20.setDisable(true);
+			t11.setText("Winning Numbers:\n");
+		});
+
 		gp.setAlignment(Pos.CENTER);
 		bp.setRight(gp);
 
 
-		Scene scene = new Scene(bp, 800, 600);
+		Scene scene = new Scene(bp, 975, 700);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
 
 	}
+
+	public void createbuttons(GridPane gp, int[] z, BorderPane innerbpmiddle){
+		// creating the buttons and giving numeric names
+//		int[] numofspotspicked = new int[]; // to keep track of how many numbers are picked on grid pane
+//		numofspotspicked[0] = 0;
+		String a = "1";
+
+		for ( int i = 0; i < 8; i++){
+			for ( int j = 0; j < 10; j++){
+				Button x = new Button(a);
+				x.setPrefSize(40, 40);
+//				System.out.println(finalY);
+				String finalA = a;
+				x.setOnAction(e->{
+					x.setStyle("-fx-background-color: red;");
+					// saving the number in array
+					// ** Sidenote **
+					// z is an array because lambda expressions cant have changing variables, so i stored array position in
+					// an array that is incremented in the storenumber function where the numbers chosen are stored as well
+					storenumbers(finalA, z, numchosen);
+					x.setDisable(true);
+					numofspotspicked++;
+					if ( numSpots[0] == numofspotspicked ){
+						gp.setDisable(true);
+						innerbpmiddle.setDisable(false);
+					}
+				});
+				gp.add(x, j, i);
+				a = increment(a); // brings to function that increments a to next string number.
+			}
+		}
+	}
+
+	public void chooseSpots(int[] numspots, BorderPane innerbpbtm, BorderPane bp, GridPane gp){
+
+		Button b6 = new Button("1");
+		Button b7 = new Button("4");
+		Button b8 = new Button("8");
+		Button b9 = new Button("10");
+		Text t1 = new Text("Pick number of Spots: ");
+		t1.setFill(Color.WHITE);
+		HBox hbox2 = new HBox(b6,b7,b8,b9);
+		hbox2.setAlignment(Pos.BOTTOM_LEFT);
+		innerbpbtm.setLeft(hbox2);
+		innerbpbtm.setTop(t1);
+
+		b6.setOnAction(e -> {
+			storeSpots1(numspots);
+			chooseDrawings(innerbpbtm, bp, gp);
+		});
+		b7.setOnAction(e -> {
+			storeSpots2(numspots);
+			chooseDrawings(innerbpbtm, bp, gp);
+		});
+		b8.setOnAction(e ->{
+			storeSpots3(numspots);
+			chooseDrawings(innerbpbtm, bp, gp);
+		});
+		b9.setOnAction(e ->{
+			storeSpots4(numspots);
+			chooseDrawings(innerbpbtm, bp, gp);
+		});
+	}
+	// Will replace the spots after spots are chosen
+	public void chooseDrawings(BorderPane innerbpbtm, BorderPane bp, GridPane gp){
+		Button b1 = new Button("1");
+		Button b2 = new Button("2");
+		Button b3 = new Button("3");
+		Button b4 = new Button("4");
+		Text t1 = new Text("Pick number of Drawings: ");
+		t1.setFill(Color.WHITE);
+		HBox hbox2 = new HBox(b1,b2,b3,b4);
+		hbox2.setAlignment(Pos.BOTTOM_LEFT);
+		innerbpbtm.setLeft(hbox2);
+		innerbpbtm.setTop(t1);
+		bp.setBottom(innerbpbtm);
+
+		b1.setOnAction(e -> {
+			storeDrawings1(numDrawings);
+			gp.setDisable(false);
+			b1.setDisable(true);
+			b2.setDisable(true);
+			b3.setDisable(true);
+			b4.setDisable(true);
+		});
+		b2.setOnAction(e -> {
+			storeDrawings2(numDrawings);
+			gp.setDisable(false);
+			b1.setDisable(true);
+			b2.setDisable(true);
+			b3.setDisable(true);
+			b4.setDisable(true);
+		});
+		b3.setOnAction(e ->{
+			storeDrawings3(numDrawings);
+			gp.setDisable(false);
+			b1.setDisable(true);
+			b2.setDisable(true);
+			b3.setDisable(true);
+			b4.setDisable(true);
+		});
+		b4.setOnAction(e ->{
+			storeDrawings4(numDrawings);
+			gp.setDisable(false);
+			b1.setDisable(true);
+			b2.setDisable(true);
+			b3.setDisable(true);
+			b4.setDisable(true);
+		});
+	}
+
+	public void playbutton(BorderPane innerbpmiddle, BorderPane bp, GridPane gp){
+		// new button
+//		innerbpmiddle.setDisable(true); // disables play button
+		Button b1 = new Button("Play");
+		b1.setMinSize(80,50);
+		b20.setMinSize(80,50);
+		b20.setStyle("-fx-border-color: PINK; -fx-border-width: 5px; -fx-background-color: DEEPPINK");
+		b1.setStyle("-fx-border-color: PINK; -fx-border-width: 5px; -fx-background-color: DEEPPINK");
+		HBox h = new HBox(b1, b20);
+		h.setSpacing(10);
+		h.setAlignment(Pos.BOTTOM_CENTER);
+		innerbpmiddle.setRight(h);
+		bp.setCenter(innerbpmiddle);
+
+		b1.setOnAction(e->{
+			b1.setStyle("-fx-border-color: GOLDENROD; -fx-border-width: 5px; -fx-background-color: RED");
+			b1.setDisable(true);
+			displaywinningnumbers(innerbpmiddle,bp);
+			winnings();
+			t10.setText("Winnings:  $"+winnings);
+			t10.setFill(Color.WHEAT);
+			t10.setFont(new Font("Times New Roman", 20));
+		});
+
+		b20.setOnAction(e->{
+			b20.setStyle("-fx-border-color: GOLDENROD; -fx-border-width: 5px; -fx-background-color: RED");
+			b20.setDisable(true);
+			randomizechoosing(gp);
+		});
+	}
+
+	public void displaywinningnumbers(BorderPane innerbpmiddle, BorderPane bp){
+		// generating random winning numbers
+		int min = 1;
+		int max = 80;
+		for ( int i = 0; i < 20; i++){
+			int b = (int)(Math.random()*(max-min+1)+min);
+			// to avoid same numbers
+			while( numwinnings.contains(b)){
+				b = (int)(Math.random()*(max-min+1)+min);
+			}
+//			System.out.println(b);
+			numwinnings.add(b);
+		}
+
+		pause.setOnFinished(e->{
+			if ( index < numwinnings.size()){
+				t11.setText(t11.getText() + numwinnings.get(index)+" "+numwinnings.get(index+1)+" " +numwinnings.get(index+2)+" "+numwinnings.get(index+3)+ "\n" );
+				index += 4;
+				pause.play();
+			}
+		});
+
+		index = 0;
+		pause.play();
+
+		t11.setFont(new Font("Times New Roman", 20));
+		t11.setFill(Color.WHEAT);
+		innerbpmiddle.setCenter(t11);
+		bp.setCenter(innerbpmiddle);
+
+
+	}
+
+	public void randomizechoosing(GridPane gp){
+		int min = 1;
+		int max = 80;
+		gp.setDisable(true);
+		for ( int i = 0; i < numSpots[0]; i++){
+			int b = (int)(Math.random()*(max-min+1)+min);
+			// to avoid same numbers
+			int index = 0;
+			while( numchosen[index] == b){
+				b = (int)(Math.random()*(max-min+1)+min);
+				index++;
+			}
+			numchosen[i] = b;
+		}
+
+		String a = "1";
+		int z;
+		for ( int i = 0; i < 8; i++){
+			for ( int j = 0; j < 10; j++){
+				Button x = new Button(a);
+				x.setPrefSize(40, 40);
+				gp.add(x, j, i);
+				z = Integer.parseInt(a);
+				for ( int k = 0; k < 10; k++){
+					if ( numchosen[k] == z){
+						x.setStyle("-fx-background-color: red;");
+					}
+				}
+				a = increment(a); // brings to function that increments a to next string number.
+			}
+		}
+
+	}
+
+	public void winnings(){
+		int nummatches = 0;
+		for ( int i = 0; i < numchosen.length; i++){
+			if (numwinnings.contains(numchosen[i]) == true){
+				nummatches++;
+			}
+		}
+
+		if ( numSpots[0] == 1){
+			if(nummatches == 1){
+				winnings += 2;
+			}
+		}
+		else if ( numSpots[0] == 4){
+			if(nummatches == 2){
+				winnings += 1;
+			}
+			else if(nummatches == 3){
+				winnings += 5;
+			}
+			else if(nummatches == 4){
+				winnings += 75;
+			}
+
+		}
+		else if ( numSpots[0] == 8){
+			if(nummatches == 4){
+				winnings += 2;
+			}
+			else if(nummatches == 5){
+				winnings += 12;
+			}
+			else if(nummatches == 6){
+				winnings += 50;
+			}
+			else if(nummatches == 7){
+				winnings += 750;
+			}
+			else if(nummatches == 8){
+				winnings += 10000;
+			}
+		}
+		else if ( numSpots[0] == 10){
+			if(nummatches == 0){
+				winnings += 5;
+			}
+			else if(nummatches == 5){
+				winnings += 2;
+			}
+			else if(nummatches == 6){
+				winnings += 15;
+			}
+			else if(nummatches == 7){
+				winnings += 40;
+			}
+			else if(nummatches == 8){
+				winnings += 450;
+			}
+			else if(nummatches == 9){
+				winnings += 4250;
+			}
+			else if(nummatches == 10){
+				winnings += 100000;
+			}
+		}
+	}
+
 
 	public String increment(String a){
 		int b = Integer.parseInt(a);
@@ -224,94 +577,41 @@ public class JavaFXTemplate extends Application {
 		return a;
 	}
 
+	// adding numbers chosen by user to store into the array
+	public void storenumbers(String a, int[] z, int[] numchosen){
+		numchosen[z[0]] = Integer.parseInt(a);
+		z[0]++;
+	}
+
+	public void storeSpots1(int[] numSpots){
+		numSpots[0] = 1;
+	}
+	public void storeSpots2(int[] numSpots){
+		numSpots[0] = 4;
+	}
+	public void storeSpots3(int[] numSpots){
+		numSpots[0] = 8;
+	}
+	public void storeSpots4(int[] numSpots){
+		numSpots[0] = 10;
+	}
+
+	public void storeDrawings1(int[] numDrawings){
+		numDrawings[0] = 1;
+	}
+	public void storeDrawings2(int[] numDrawings){
+		numDrawings[0] = 2;
+	}
+	public void storeDrawings3(int[] numDrawings){
+		numDrawings[0] = 3;
+	}
+	public void storeDrawings4(int[] numDrawings){
+		numDrawings[0] = 4;
+	}
+
+
 	public void exitbutton(Stage primaryStage, Button b4){
 		b4.setOnAction(e-> primaryStage.close());
-	}
-
-}
-
-public Scene startplayingbutton(Stage primaryStage) {
-		
-         Button b10 = new Button("Next");
-		
-		 Button b6 = new Button("1");
-		 Button b7 = new Button("4");
-		 Button b8 = new Button("8");
-		 Button b9 = new Button("10");
-		 TextField t4 = new TextField("Pick number of Spots");
-		 HBox Hbox1 = new HBox(b6,b7,b8,b9);
-		 Hbox1.setAlignment(Pos.TOP_LEFT);
-		
-		 b6.setOnAction(e -> {
-			 numspots = 1;
-		 });
-		 b7.setOnAction(e -> {
-			numspots = 4;
-		 });
-		 b8.setOnAction(e ->{
-			numspots = 8;
-		 });
-		 b9.setOnAction(e ->{
-			numspots = 10;
-		 });
-	    
-		 Button b11 = new Button("1");
-		 Button b12 = new Button("2");
-		 Button b13 = new Button("3");
-		 Button b14 = new Button("4");
-		 TextField t5 = new TextField("Pick number of Drawings");
-		 HBox Hbox2 = new HBox(b11,b12,b13,b14);
-		 Hbox2.setAlignment(Pos.CENTER_LEFT);
-		 VBox vbox1 = new VBox(t4,Hbox1,t5,Hbox2);
-		 
-		 b11.setOnAction(e -> {
-			 numdrawings = 1;
-		 });
-		 b12.setOnAction(e -> {
-			numdrawings = 2;
-		 });
-		 b13.setOnAction(e ->{
-			numdrawings = 3;
-		 });
-		 b14.setOnAction(e ->{
-			numdrawings = 4;
-		 });
-		
-		
-		BorderPane bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: lightblue;");
-    //    bp.setCenter(Hbox1);
-     //   bp.setCenter(Hbox2);
-		
-	
-	//	bp.setTop(t4);
-	//	bp.setLeft(t5);
-		bp.setRight(b10);
-		bp.setCenter(vbox1);
-		b10.setOnAction(e -> primaryStage.setScene(startplayingbutton(primaryStage)));
-		
-		
-
-		
-		
-		 
-		// Back button
-		Button b1 = new Button("Back");
-		b1.setOnAction(e -> mainscreen(primaryStage));
-		bp.setBottom(b1);
-		 
-		Scene scene = new Scene(bp, 400, 400);
-		return scene;
-        
-
-	}
-	public void potentialwinning(Stage primaryStage) {
-		Button b10 = new Button("Next");
-		BorderPane bp = new BorderPane();
-		bp.setStyle("-fx-font-family: SansSerif;" + "-fx-background-color: blue;");
-        HBox Hbox1 = new HBox(b10);
-        Hbox1.setAlignment(Pos.TOP_LEFT);
-        bp.setCenter(Hbox1);
 	}
 
 }
